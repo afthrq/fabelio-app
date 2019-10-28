@@ -1,0 +1,31 @@
+.btn-case {
+    background: #ffd41c;
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: #333;
+    font-weight: bold;
+}
+
+.btn-case:hover {
+    color: #333;
+}
+
+table.table-products {
+    width: 100%;
+}
+table.table-products th {
+    text-align: center;
+}
+table.table-products td {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+tbody.product-description::before
+{
+  content: '';
+  display: block;
+  height: 15px;
+}

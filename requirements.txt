@@ -1,0 +1,6 @@
+Django
+mysqlclient
+scrapy
+scrapyd
+djangorestframework
+python-scrapyd-api
