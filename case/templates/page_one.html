@@ -24,35 +24,15 @@
             </div>
         </div>
     </form>
+    <form class="form-group" id="get-pid-form" method="post" name="getPidForm">
+        {% csrf_token %}
+        <input type="hidden" class="uuid-field" name="uuid" value="">
+    </form>
 </div>
 {% endblock %}
 
 {% block js %}
     {% load staticfiles %}
     <script src="{% static 'js/jquery-loading/jquery.loading.min.js' %}"></script>
-    <script>
-    $('.btn-case').click(function (event) {
-        event.preventDefault();
-        var url = $('.link-input').val().toLowerCase();
-        var $alert = $('.alert-danger');
-        var $err = $('.error-message');
-
-        if (url === "" && url.trim().length === 0){
-            $err.html("Input should not be empty");
-            if (!$alert.hasClass("show")){
-                $alert.addClass("show");
-            }
-            return false;
-        } else if (url.indexOf("fabelio.com") === -1){
-            $err.html("Not a valid Fabelio link");
-            if (!$alert.hasClass("show")){
-                $alert.addClass("show");
-            }
-            return false;
-        }
-
-        $('body').loading();
-        $('#search-form').submit();
-    })
-    </script>
+    <script src="{% static 'js/case.js' %}"></script>
 {% endblock %}

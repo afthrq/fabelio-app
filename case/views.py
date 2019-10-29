@@ -6,10 +6,11 @@ import lxml.html.clean
 from urllib.parse import urlparse
 from uuid import uuid4
 
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from random import randrange
 
-from django.urls import reverse
+from rest_framework import status
 from scrapyd_api import ScrapydAPI
 
 from case.models import ProductId, Product
@@ -18,26 +19,7 @@ from fabelio_app import settings
 
 def page_one(request):
     rand = randrange(1000)
-    if request.method == "POST":
-        url = request.POST.get('input', None).strip()
-
-        try:
-            product_id = ProductId.objects.get(url=url)
-            return redirect('page_three', uuid=product_id.uuid)
-        except ProductId.DoesNotExist:
-            domain = urlparse(url).netloc
-            unique_id = str(uuid4())
-
-            settings = {
-                'unique_id': unique_id,
-                'USER_AGENT': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-            }
-
-            scrapyd = ScrapydAPI('http://localhost:6800')
-            scrapyd.schedule('default', 'fab_crawler', settings=settings, url=url, domain=domain, uuid=unique_id)
-            return redirect('page_three', uuid=unique_id)
-    else:
-        context = {'random_number': rand}
+    context = {'random_number': rand}
 
     return render(request, 'page_one.html', context)
 
@@ -46,18 +28,17 @@ def page_two(request):
     rand = randrange(1000)
     context = {'random_number': rand}
     products_list = Product.objects.values('name', 'image_src', 'last_update',
-                                           'desc', 'pid__uuid', 'price')
+                                           'desc', 'pid__pid', 'price')
     context['product_list'] = products_list
 
     return render(request, 'page_two.html', context)
 
 
-def page_three(request, uuid):
+def page_three(request, id):
     rand = randrange(1000)
     context = {'random_number': rand}
     try:
-        product_id = ProductId.objects.get(uuid=uuid)
-
+        product_id = ProductId.objects.get(pid=id)
         response = requests.get(settings.FAB_PRODUCT_API.format(product_id.pid))
         response_data = json.loads(response.text)['product']
         desc = lxml.html.fromstring(response_data['description'])
@@ -88,3 +69,36 @@ def page_three(request, uuid):
 
     return render(request, 'page_three.html', context)
 
+
+def url_check(request):
+    url = request.POST.get('input', None).strip()
+
+    try:
+        product_id = ProductId.objects.get(url=url)
+
+        return JsonResponse({'pid': product_id.pid, 'status': True}, status=status.HTTP_200_OK)
+    except ProductId.DoesNotExist:
+        domain = urlparse(url).netloc
+        unique_id = str(uuid4())
+
+        settings = {
+            'unique_id': unique_id,
+            'USER_AGENT': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+        }
+
+        scrapyd = ScrapydAPI('http://localhost:6800')
+        scrapyd.schedule('default', 'fab_crawler', settings=settings, url=url, domain=domain, uuid=unique_id)
+    return JsonResponse({'status': False, 'uuid': unique_id}, status=status.HTTP_200_OK)
+
+
+def get_pid(request):
+    uuid = request.POST.get('uuid', None).strip()
+    context = {}
+    try:
+        product_id = ProductId.objects.get(uuid=uuid)
+        context['error_message'] = ''
+        context['pid'] = product_id.pid
+        return JsonResponse(context, status=status.HTTP_200_OK)
+    except ProductId.DoesNotExist:
+        context['error_message'] = 'Product ID does not exist'
+        return JsonResponse(context, status=status.HTTP_404_NOT_FOUND)
