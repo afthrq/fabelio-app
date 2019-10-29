@@ -18,7 +18,9 @@ There are 2 main components for this application to run:
    This will activate the virtual environment for the web app
 2. After that install dependencies needed by running: `pip install -r requirements.txt`
    This will install all dependencies for this application written in `requirements.txt`
-3. After the dependencies installation succeded, run the web app by: `python manage.py runserver`
+3. Modify the `settings.py` in the `DATABASE` section to match your running mysql settings
+4. Run migration for the database by running: ` python migrate` 
+5. After the dependencies installation succeded, run the web app by: `python manage.py runserver`
    This will bring the django application live on `localhost:8000`
 
 ### Docker
