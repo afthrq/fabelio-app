@@ -41,7 +41,7 @@
                             <td title="{{ product.desc }}">{{ product.desc }}</td>
                             <td>Rp {{ product.price|intcomma }}</td>
                             <td>{{ product.last_update|naturaltime }}</td>
-                            <td><a href="{% url 'page_three' uuid=product.pid__uuid %}" class="btn btn-case">
+                            <td><a href="{% url 'page_three' id=product.pid__pid %}" class="btn btn-case">
                                 Detail</a></td>
                         </tr>
                     {% endfor %}
