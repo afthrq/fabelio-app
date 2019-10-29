@@ -123,8 +123,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'statics/'),
 )
+LOGS_DIRS = BASE_DIR + '/statics/logs/'
 FAB_PRODUCT_API = 'https://fabelio.com/insider/data/product/id/{}'
