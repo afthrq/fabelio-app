@@ -1,4 +1,4 @@
-# Fabelio Price Product Price Tracking
+# Fabelio Product Price Tracking
 
 ## What is this about
 This project is a simple application made using Django to keep track of any information about any given Fabelio products.
