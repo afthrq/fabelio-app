@@ -6,14 +6,16 @@ import lxml.html.clean
 from urllib.parse import urlparse
 from uuid import uuid4
 
+from datetime import timedelta
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.utils import timezone
 from random import randrange
 
 from rest_framework import status
 from scrapyd_api import ScrapydAPI
 
-from case.models import ProductId, Product
+from case.models import ProductId, Product, ProductPriceHistory
 from fabelio_app import settings
 
 
@@ -39,18 +41,29 @@ def page_three(request, id):
     context = {'random_number': rand}
     try:
         product_id = ProductId.objects.get(pid=id)
-        response = requests.get(settings.FAB_PRODUCT_API.format(product_id.pid))
-        response_data = json.loads(response.text)['product']
-        desc = lxml.html.fromstring(response_data['description'])
-        cleaner = lxml.html.clean.Cleaner(style=True)
-        desc = cleaner.clean_html(desc)
-        desc = desc.text_content()
 
         try:
             product = Product.objects.get(pid=product_id)
-            product.price = response_data['unit_sale_price']
-            product.save()
+
+            if product.last_update < timezone.now() - timedelta(hours=1):
+                response = requests.get(settings.FAB_PRODUCT_API.format(product_id.pid))
+                response_data = json.loads(response.text)['product']
+
+                product.price = response_data['unit_sale_price']
+                product.save()
+
+                price_history = ProductPriceHistory()
+                price_history.product = product
+                price_history.price = response_data['unit_sale_price']
+                price_history.save()
         except Product.DoesNotExist:
+            response = requests.get(settings.FAB_PRODUCT_API.format(product_id.pid))
+            response_data = json.loads(response.text)['product']
+            desc = lxml.html.fromstring(response_data['description'])
+            cleaner = lxml.html.clean.Cleaner(style=True)
+            desc = cleaner.clean_html(desc)
+            desc = desc.text_content()
+
             product = Product()
             product.pid = product_id
             product.name = response_data['name']
@@ -59,11 +72,20 @@ def page_three(request, id):
             product.image_src = response_data['product_image_url']
             product.save()
 
+            price_history = ProductPriceHistory()
+            price_history.product = product
+            price_history.price = response_data['unit_sale_price']
+            price_history.save()
+
         context['product'] = {}
         context['product']['name'] = product.name
         context['product']['price'] = product.price
         context['product']['description'] = product.desc
         context['product']['image_url'] = product.image_src
+
+        product_history_list = ProductPriceHistory.objects.filter(product=product).order_by('-time_created')\
+            .values('price', 'time_created')
+        context['product_history_list'] = product_history_list
     except ProductId.DoesNotExist:
         context['error_message'] = 'Product does not exist'
 
