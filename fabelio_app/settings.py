@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'fabelio_app',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
