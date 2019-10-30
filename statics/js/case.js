@@ -41,6 +41,7 @@ $('.btn-case').click(function (event) {
                 if (!$alert.hasClass("show")){
                     $alert.addClass("show");
                 }
+                $('body').loading('stop');
                 return false;
             }
         },
@@ -49,6 +50,7 @@ $('.btn-case').click(function (event) {
             if (!$alert.hasClass("show")){
                 $alert.addClass("show");
             }
+            $('body').loading('stop');
             return false;
         },
         complete: function () {
@@ -67,6 +69,7 @@ $('.btn-case').click(function (event) {
                 if (!$alert.hasClass("show")){
                     $alert.addClass("show");
                 }
+                $('body').loading('stop');
                 return false;
             }
         }
@@ -108,6 +111,7 @@ function get_pid() {
                     if (!$alert.hasClass("show")){
                         $alert.addClass("show");
                     }
+                    $('body').loading('stop');
                     return false;
                 }
             }
