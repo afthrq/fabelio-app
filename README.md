@@ -22,8 +22,8 @@ There are 2 main components for this application to run:
 4. Run migration for the database by running: ` python migrate` 
 5. After the dependencies installation succeded, run the web app by: `python manage.py runserver`
    This will bring the django application live on `localhost:8000`
-6. Also run: `scrapyd` to run the scrapy application
-   This will bring the django application live on `localhost:6800`
+6. On `fab_scrapper` directory run : `scrapyd` to run the scrapy application
+   This will bring the scrapy application live on `localhost:6800`
 
 ### Docker
 *Under development*
