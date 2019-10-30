@@ -4,3 +4,4 @@ scrapy
 scrapyd
 djangorestframework
 python-scrapyd-api
+dj-database-url
