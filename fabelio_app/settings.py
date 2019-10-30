@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'fabelio_app.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 db_from_env = dj_database_url.config()
 DATABASES = {}
-DATABASES['default'].update(db_from_env)
+DATABASES['default'] = dj_database_url.config(default='postgres://bjcguvllnhqyqi:0df12d5bcb668aea164d809f15e1abb9b97aec22c6b744e82fa4af8b42273c59@ec2-107-22-222-161.compute-1.amazonaws.com:5432/d9knp5d0om1bn2')
 
 
 # Password validation
