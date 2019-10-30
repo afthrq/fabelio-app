@@ -1,5 +1,5 @@
 Django
-mysqlclient
+psycopg2
 scrapy
 scrapyd
 djangorestframework
